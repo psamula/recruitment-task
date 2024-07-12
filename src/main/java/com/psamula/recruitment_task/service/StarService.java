@@ -1,52 +1,24 @@
 package com.psamula.recruitment_task.service;
 
 import com.psamula.recruitment_task.model.Star;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
-@Service
-public class StarService {
+public interface StarService {
 
-    public List<Star> findClosestStars(List<Star> stars, int size) {
-        if (CollectionUtils.isEmpty(stars)) {
-            throw new RuntimeException("No stars found");
-        }
+    Star findById(Long id);
 
-        return stars.stream()
-                .filter(Objects::nonNull)
-                .sorted(Comparator.comparingLong(Star::getDistance))
-                .limit(size)
-                .toList();
-    }
+    Star update(Long id, Star star);
 
-    public Map<Long, Integer> getNumberOfStarsByDistances(List<Star> stars) {
-        if (CollectionUtils.isEmpty(stars)) {
-            throw new RuntimeException("No stars found");
-        }
+    Star save(Star star);
 
-        return stars.stream()
-                .filter(Objects::nonNull)
-                .collect(Collectors.groupingBy(
-                        Star::getDistance,
-                        TreeMap::new,
-                        Collectors.collectingAndThen(Collectors.counting(), Long::intValue)
-                ));
-    }
+    void deleteById(Long id);
 
-    public Collection<Star> getUniqueStars(Collection<Star> stars) {
-        if (CollectionUtils.isEmpty(stars)) {
-            throw new RuntimeException("No stars found");
-        }
+    List<Star> findClosestStars(List<Star> stars, int size);
 
-        return stars.stream()
-                .filter(Objects::nonNull)
-                .collect(Collectors.toMap(
-                        Star::getName,
-                        star -> star,
-                        (existing, replacement) -> existing))
-                .values();
-    }
+    Collection<Star> getUniqueStars(Collection<Star> stars);
+
+    Map<Long, Integer> getNumberOfStarsByDistances(List<Star> stars);
 }
